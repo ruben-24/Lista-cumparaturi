@@ -1,0 +1,7 @@
+body { font-family: sans-serif; background:#f4f4f4; margin:0; padding:20px; }
+#app { background:white; padding:20px; border-radius:8px; max-width:600px; margin:auto; }
+h1 { margin-top:0; }
+input, button { padding:8px; margin:4px; }
+.category { margin-top:20px; }
+.item { display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px solid #eee; }
+.item:last-child { border-bottom:none; }
