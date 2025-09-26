@@ -14,6 +14,15 @@ addBtn.addEventListener('click', () => {
   itemQty.value = '';
 });
 
+socket.emit('action', { 
+  type: 'add', 
+  payload: { 
+    name, 
+    qty: itemQty.value.trim(),
+    category: document.getElementById('itemCategory').value.trim() || 'Altele'
+  } 
+});
+
 socket.on('state', (s) => {
   localState = s;
   render();
