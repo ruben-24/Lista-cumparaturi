@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lista de cumpărături</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="app">
+    <h1>Lista de cumpărături</h1>
+    <input id="itemName" placeholder="Produs..." autofocus />
+    <input id="itemQty" placeholder="Cantitate" />
+    <button id="addBtn">Adaugă</button>
+
+    <div id="categoriesContainer"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
