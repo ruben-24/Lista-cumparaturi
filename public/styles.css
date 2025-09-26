@@ -1,59 +1,98 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(to bottom right, #f0f4f8, #d9e2ec);
+  background: linear-gradient(to right, #f0f4f8, #d9e2ec);
   margin: 0;
   padding: 20px;
 }
 
 #app {
+  max-width: 700px;
+  margin: auto;
   background: white;
   padding: 30px;
   border-radius: 12px;
-  max-width: 600px;
-  margin: auto;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 h1 {
   text-align: center;
   color: #333;
+  margin-bottom: 20px;
 }
 
-input, button {
+.add-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.add-item input {
+  flex: 1;
   padding: 10px;
-  margin: 5px 0;
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 16px;
 }
 
-button {
+.add-item button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
   background-color: #007bff;
   color: white;
-  border: none;
+  font-weight: bold;
   cursor: pointer;
   transition: 0.2s;
 }
 
-button:hover {
+.add-item button:hover {
   background-color: #0056b3;
+}
+
+.category {
+  margin-bottom: 25px;
+}
+
+.category h3 {
+  background-color: #f7f9fc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #555;
+  margin-bottom: 10px;
 }
 
 .item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  border-radius: 6px;
+  background: #fafafa;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
   transition: 0.2s;
 }
 
 .item:hover {
-  background-color: #f9f9f9;
+  background-color: #f1f5f9;
 }
 
 .item span {
   flex-grow: 1;
+  margin-left: 10px;
+}
+
+.item button {
+  padding: 5px 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.item button:hover {
+  background-color: #a71d2a;
 }
