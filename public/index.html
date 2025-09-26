@@ -1,23 +1,26 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de cumpărături</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="app">
     <h1>Lista de cumpărături</h1>
-    <input id="itemName" placeholder="Produs..." autofocus />
-    <input id="itemCategory" placeholder="Categorie (ex: Legume)" />
-    <input id="itemQty" placeholder="Cantitate" />
-    <button id="addBtn">Adaugă</button>
+
+    <div class="add-item">
+      <input id="itemName" placeholder="Nume produs">
+      <input id="itemQty" placeholder="Cantitate">
+      <input id="itemCategory" placeholder="Categorie (ex: Legume)">
+      <button id="addBtn">Adaugă</button>
+    </div>
 
     <div id="categoriesContainer"></div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script src="/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
