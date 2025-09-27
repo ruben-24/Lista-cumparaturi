@@ -7,10 +7,10 @@
 <style>
   body {
     font-family: system-ui, sans-serif;
-    background: #121212; /* fundal negru */
+    background: #121212;
     padding: 15px;
     margin: 0;
-    color: #f5f5f5; /* text alb */
+    color: #f5f5f5;
     max-width: 800px;
     margin-inline: auto;
   }
@@ -20,6 +20,28 @@
     color: #ffffff;
     font-size: 1.8em;
     margin-bottom: 20px;
+  }
+
+  /* TABURI */
+  .tabs {
+    display: flex;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .tab-button {
+    flex: 1;
+    padding: 12px;
+    background: #1e1e1e;
+    color: #f5f5f5;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+  }
+  .tab-button.active {
+    background: #ffa500;
+    color: #000;
   }
 
   form {
@@ -44,47 +66,41 @@
     padding: 12px 18px;
     border-radius: 8px;
     border: none;
-    background: #007aff; /* albastru vizibil */
+    background: #007aff;
     color: white;
     font-weight: bold;
     font-size: 1em;
     cursor: pointer;
   }
-
-  button:hover {
-    background: #005fcc;
-  }
+  button:hover { background: #005fcc; }
 
   #msgStatus {
     text-align: center;
     font-size: 0.9em;
-    color: #34c759; /* verde vizibil */
+    color: #34c759;
     margin-bottom: 10px;
     opacity: 0;
     transition: opacity 0.3s;
   }
 
   .categorie-card {
-    background: #1e1e1e; /* gri închis */
+    background: #1e1e1e;
     border-radius: 10px;
     padding: 12px 15px;
     margin-bottom: 18px;
     box-shadow: 0 3px 8px rgba(0,0,0,0.5);
-    color: #f5f5f5; /* text alb în card */
+    color: #f5f5f5;
   }
-
   .categorie-card h3 {
     margin: 8px 0;
     font-size: 1.2em;
-    color: #ffa500; /* portocaliu contrastant */
+    color: #ffa500;
   }
-
   .categorie-card ul {
     list-style: none;
     padding: 0;
     margin: 0;
   }
-
   .categorie-card li {
     padding: 10px;
     border-bottom: 1px solid #333;
@@ -93,10 +109,7 @@
     align-items: center;
     font-size: 1em;
   }
-
-  .categorie-card li:last-child {
-    border-bottom: none;
-  }
+  .categorie-card li:last-child { border-bottom: none; }
 
   .btn-del, .btn-edit {
     margin-left: 6px;
@@ -106,10 +119,8 @@
     border-radius: 6px;
     cursor: pointer;
   }
-
   .btn-del { background: #ff3b30; color: white; }
   .btn-edit { background: #34c759; color: white; }
-
   .btn-del:hover { background: #d32f2f; }
   .btn-edit:hover { background: #2e8b57; }
 
@@ -124,10 +135,10 @@
     border: none;
     cursor: pointer;
   }
+  #clearChecked:hover { background: #cc7a00; }
 
-  #clearChecked:hover {
-    background: #cc7a00;
-  }
+  .shop { display: none; }
+  .shop.active { display: block; }
 
   @media (max-width: 600px) {
     h1 { font-size: 1.5em; }
@@ -140,6 +151,12 @@
 
 <h1>Lista de cumpărături</h1>
 
+<!-- TABURI -->
+<div class="tabs">
+  <button class="tab-button active" onclick="switchTab('general')">General</button>
+  <button class="tab-button" onclick="switchTab('lidl')">Lidl</button>
+</div>
+
 <form id="formProdus">
   <input type="text" id="inputProdus" placeholder="Adaugă produs..." required>
   <button type="submit">Adaugă</button>
@@ -147,7 +164,13 @@
 
 <div id="msgStatus"></div>
 
-<div id="lista"></div>
+<!-- LISTE -->
+<div id="general" class="shop active">
+  <div id="lista"></div>
+</div>
+<div id="lidl" class="shop">
+  <div id="lista-lidl"></div>
+</div>
 
 <button id="clearChecked">Șterge bifate</button>
 
