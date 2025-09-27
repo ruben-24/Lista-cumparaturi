@@ -7,18 +7,73 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Lista de cumpărături</h1>
+  <div class="app">
+    <h1>Lista de cumpărături</h1>
 
-  <div id="magazin-tabs"></div>
+    <!-- Tabs pentru magazine -->
+    <div class="tabs">
+      <button class="tab-button active" data-magazin="Edeka">Edeka</button>
+      <button class="tab-button" data-magazin="Kaufland">Kaufland</button>
+      <button class="tab-button" data-magazin="Dm">Dm</button>
+      <button class="tab-button" data-magazin="Rossmann">Rossmann</button>
+      <button class="tab-button" data-magazin="Lidl">Lidl</button>
+      <button class="tab-button" data-magazin="Fressnapf">Fressnapf</button>
+      <button class="tab-button" data-magazin="Aldi">Aldi</button>
+    </div>
 
-  <form id="add-form">
-    <input type="text" id="product-input" placeholder="Adaugă produs..." required>
-    <button type="submit">Adaugă</button>
-  </form>
+    <!-- Formular adăugare produs -->
+    <div class="add-product">
+      <input type="text" id="productInput" placeholder="Produs nou...">
+      <button id="addBtn">Adaugă</button>
+    </div>
 
-  <div id="shopping-list"></div>
+    <!-- Container pentru liste -->
+    <div id="listsContainer">
 
-  <script type="module" src="database.js"></script>
+      <!-- Secțiuni categorii (vor fi populate din JS) -->
+      <div class="category" data-category="Legume">
+        <h3>Legume</h3>
+        <ul class="product-list" id="Legume"></ul>
+      </div>
+
+      <div class="category" data-category="Fructe">
+        <h3>Fructe</h3>
+        <ul class="product-list" id="Fructe"></ul>
+      </div>
+
+      <div class="category" data-category="Carne">
+        <h3>Carne</h3>
+        <ul class="product-list" id="Carne"></ul>
+      </div>
+
+      <div class="category" data-category="Lactate">
+        <h3>Lactate</h3>
+        <ul class="product-list" id="Lactate"></ul>
+      </div>
+
+      <div class="category" data-category="Condimente">
+        <h3>Condimente</h3>
+        <ul class="product-list" id="Condimente"></ul>
+      </div>
+
+      <div class="category" data-category="Băuturi">
+        <h3>Băuturi</h3>
+        <ul class="product-list" id="Bauturi"></ul>
+      </div>
+
+      <div class="category" data-category="Produse de curățenie">
+        <h3>Produse de curățenie</h3>
+        <ul class="product-list" id="Curatenie"></ul>
+      </div>
+
+      <div class="category" data-category="Altele">
+        <h3>Altele</h3>
+        <ul class="product-list" id="Altele"></ul>
+      </div>
+
+    </div>
+  </div>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>
