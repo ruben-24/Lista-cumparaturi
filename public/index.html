@@ -22,6 +22,24 @@
       margin-bottom: 20px;
     }
 
+    /* BURGER MENU */
+    .burger {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 15px;
+    }
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: #1e1e1e;
+      color: #fff;
+      font-size: 1em;
+    }
+
     /* FORM */
     form {
       display: flex;
@@ -58,24 +76,6 @@
       margin-bottom: 15px;
       opacity: 0;
       transition: opacity 0.3s;
-    }
-
-    /* BURGER MENU */
-    .burger {
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 15px;
-    }
-    select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      background: #1e1e1e;
-      color: #fff;
-      font-size: 1em;
     }
 
     /* CARDURI LISTE */
@@ -143,15 +143,7 @@
 <body>
   <h1>🛒 Lista de cumpărături</h1>
 
-  <!-- FORMULAR -->
-  <form id="formProdus">
-    <input type="text" id="inputProdus" placeholder="Adaugă produs..." required>
-    <input type="text" id="inputCantitate" placeholder="Cantitate (ex: 2, 1kg)">
-    <button type="submit">Adaugă</button>
-  </form>
-  <div id="msgStatus"></div>
-
-  <!-- BURGER MENU -->
+  <!-- BURGER MENU (MUTAT SUS) -->
   <div class="burger">
     <select id="magazinSelect">
       <option value="general">General</option>
@@ -163,6 +155,14 @@
       <option value="lidl">Lidl</option>
     </select>
   </div>
+
+  <!-- FORMULAR (MUTAT DUPĂ SELECTOR) -->
+  <form id="formProdus">
+    <input type="text" id="inputProdus" placeholder="Adaugă produs..." required>
+    <input type="text" id="inputCantitate" placeholder="Cantitate (ex: 2, 1kg)">
+    <button type="submit">Adaugă</button>
+  </form>
+  <div id="msgStatus"></div>
 
   <!-- BUTON CLEAR -->
   <button id="clearChecked">Șterge lista curentă</button>
