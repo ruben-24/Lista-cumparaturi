@@ -22,26 +22,17 @@
     margin-bottom: 20px;
   }
 
-  /* TABURI */
-  .tabs {
-    display: flex;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .tab-button {
-    flex: 1;
+  /* Burger select */
+  #magazinSelect {
+    width: 100%;
     padding: 12px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: 1px solid #444;
     background: #1e1e1e;
     color: #f5f5f5;
-    border: none;
+    margin-bottom: 20px;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 1em;
-  }
-  .tab-button.active {
-    background: #ffa500;
-    color: #000;
   }
 
   form {
@@ -111,18 +102,17 @@
   }
   .categorie-card li:last-child { border-bottom: none; }
 
-  .btn-del, .btn-edit {
+  .btn-del {
     margin-left: 6px;
     padding: 5px 10px;
     font-size: 0.8em;
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    background: #ff3b30;
+    color: white;
   }
-  .btn-del { background: #ff3b30; color: white; }
-  .btn-edit { background: #34c759; color: white; }
   .btn-del:hover { background: #d32f2f; }
-  .btn-edit:hover { background: #2e8b57; }
 
   #clearChecked {
     margin-top: 20px;
@@ -143,7 +133,7 @@
   @media (max-width: 600px) {
     h1 { font-size: 1.5em; }
     .categorie-card li { font-size: 1em; }
-    button, input[type="text"] { font-size: 1em; }
+    button, input[type="text"], select { font-size: 1em; }
   }
 </style>
 </head>
@@ -151,16 +141,16 @@
 
 <h1>Lista de cumpărături</h1>
 
-<!-- TABURI -->
-<div class="tabs">
-  <button class="tab-button active" onclick="switchTab('general')">General</button>
-  <button class="tab-button" onclick="switchTab('aldi')">Aldi</button>
-  <button class="tab-button" onclick="switchTab('dm')">Dm</button>
-  <button class="tab-button" onclick="switchTab('freesnapf')">Freesnapf</button>
-  <button class="tab-button" onclick="switchTab('rossmann')">Rossmann</button>
-  <button class="tab-button" onclick="switchTab('kaufland')">Kaufland</button>
-  <button class="tab-button" onclick="switchTab('lidl')">Lidl</button>
-</div>
+<!-- Burger select -->
+<select id="magazinSelect">
+  <option value="general">General</option>
+  <option value="aldi">Aldi</option>
+  <option value="dm">Dm</option>
+  <option value="freesnapf">Freesnapf</option>
+  <option value="rossmann">Rossmann</option>
+  <option value="kaufland">Kaufland</option>
+  <option value="lidl">Lidl</option>
+</select>
 
 <form id="formProdus">
   <input type="text" id="inputProdus" placeholder="Adaugă produs..." required>
@@ -170,16 +160,16 @@
 <div id="msgStatus"></div>
 
 <!-- LISTE -->
-<div id="general" class="shop active">
-  <div id="lista"></div>
-</div>
-<div id="lidl" class="shop">
-  <div id="lista-lidl"></div>
-</div>
+<div id="general" class="shop active"><div id="lista-general"></div></div>
+<div id="aldi" class="shop"><div id="lista-aldi"></div></div>
+<div id="dm" class="shop"><div id="lista-dm"></div></div>
+<div id="freesnapf" class="shop"><div id="lista-freesnapf"></div></div>
+<div id="rossmann" class="shop"><div id="lista-rossmann"></div></div>
+<div id="kaufland" class="shop"><div id="lista-kaufland"></div></div>
+<div id="lidl" class="shop"><div id="lista-lidl"></div></div>
 
-<button id="clearChecked">Șterge bifate</button>
+<button id="clearChecked">Șterge toate produsele</button>
 
-<!-- Scriptul aplicației -->
 <script type="module" src="app.js" defer></script>
 </body>
 </html>
