@@ -1,23 +1,17 @@
-<!DOCTYPE html>
-<html lang="ro">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lista de cumpărături</title>
 <style>
   body {
     font-family: system-ui, sans-serif;
-    background: #fdfdfd;
+    background: #121212; /* fundal negru */
     padding: 15px;
     margin: 0;
-    color: #333;
+    color: #f1f1f1; /* text alb */
     max-width: 800px;
     margin-inline: auto;
   }
 
   h1 {
     text-align: center;
-    color: #222;
+    color: #ffffff;
     font-size: 1.8em;
     margin-bottom: 20px;
   }
@@ -33,8 +27,10 @@
     flex: 1;
     padding: 12px;
     border-radius: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #333;
     font-size: 1em;
+    background: #1e1e1e;
+    color: #fff;
     min-width: 0;
   }
 
@@ -56,20 +52,24 @@
   #msgStatus {
     text-align: center;
     font-size: 0.9em;
-    color: green;
+    color: #34c759;
     margin-bottom: 10px;
     opacity: 0;
     transition: opacity 0.3s;
   }
 
   .categorie-card {
+    background: #1e1e1e; /* carduri gri închis */
+    border-radius: 10px;
+    padding: 12px 15px;
     margin-bottom: 18px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.5);
   }
 
   .categorie-card h3 {
     margin: 8px 0;
     font-size: 1.2em;
-    color: #007aff;
+    color: #ffa500;
   }
 
   .categorie-card ul {
@@ -80,7 +80,7 @@
 
   .categorie-card li {
     padding: 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #333;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -112,23 +112,3 @@
     button, input[type="text"] { font-size: 1em; }
   }
 </style>
-</head>
-<body>
-
-<h1>Lista de cumpărături</h1>
-
-<form id="formProdus">
-  <input type="text" id="inputProdus" placeholder="Adaugă produs..." required>
-  <button type="submit">Adaugă</button>
-</form>
-
-<div id="msgStatus"></div>
-
-<div id="lista"></div>
-
-<button id="clearChecked" style="margin-top:20px; width:100%; background:#ff9500;">Șterge bifate</button>
-
-<!-- Firebase SDK -->
-<script type="module" src="app.js" defer></script>
-</body>
-</html>
