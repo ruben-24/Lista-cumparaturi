@@ -1,99 +1,29 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lista de cumpărături</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de cumpărături</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app">
+
+<div id="container">
     <h1>Lista de cumpărături</h1>
 
-    <!-- Tabs pentru magazine -->
-    <div class="tabs">
-  <button class="tab-button" onclick="openShop('Edeka')">Edeka</button>
-  <button class="tab-button" onclick="openShop('Kaufland')">Kaufland</button>
-  <button class="tab-button" onclick="openShop('DM')">DM</button>
-  <button class="tab-button" onclick="openShop('Rossmann')">Rossmann</button>
-  <button class="tab-button" onclick="openShop('Lidl')">Lidl</button>
-  <button class="tab-button" onclick="openShop('Fressnapf')">Fressnapf</button>
-  <button class="tab-button" onclick="openShop('Aldi')">Aldi</button>
-</div>
-
-<div id="shops-container">
-  <div class="shop" id="Edeka">
-    <h2>Edeka</h2>
-    <ul id="Edeka_Legume"></ul>
-    <ul id="Edeka_Fructe"></ul>
-    <ul id="Edeka_Carne"></ul>
-    <ul id="Edeka_Lactate"></ul>
-    <ul id="Edeka_Condimente"></ul>
-    <ul id="Edeka_Bauturi"></ul>
-    <ul id="Edeka_ProduseDeCuratenie"></ul>
-    <ul id="Edeka_Altele"></ul>
-  </div>
-
-  <div class="shop" id="Kaufland">...</div>
-  <div class="shop" id="DM">...</div>
-  <div class="shop" id="Rossmann">...</div>
-  <div class="shop" id="Lidl">...</div>
-  <div class="shop" id="Fressnapf">...</div>
-  <div class="shop" id="Aldi">...</div>
-</div>
-    <!-- Formular adăugare produs -->
-    <div class="add-product">
-      <input type="text" id="productInput" placeholder="Produs nou...">
-      <button id="addBtn">Adaugă</button>
+    <!-- Input + Buton -->
+    <div id="input-container">
+        <input type="text" id="product-input" placeholder="Introduceți produsul...">
+        <button id="add-button">Adaugă</button>
     </div>
 
-    <!-- Container pentru liste -->
-    <div id="listsContainer">
+    <!-- Taburi magazine -->
+    <div id="tabs"></div>
 
-      <!-- Secțiuni categorii (vor fi populate din JS) -->
-      <div class="category" data-category="Legume">
-        <h3>Legume</h3>
-        <ul class="product-list" id="Legume"></ul>
-      </div>
+    <!-- Liste magazine -->
+    <div id="shop-lists"></div>
+</div>
 
-      <div class="category" data-category="Fructe">
-        <h3>Fructe</h3>
-        <ul class="product-list" id="Fructe"></ul>
-      </div>
-
-      <div class="category" data-category="Carne">
-        <h3>Carne</h3>
-        <ul class="product-list" id="Carne"></ul>
-      </div>
-
-      <div class="category" data-category="Lactate">
-        <h3>Lactate</h3>
-        <ul class="product-list" id="Lactate"></ul>
-      </div>
-
-      <div class="category" data-category="Condimente">
-        <h3>Condimente</h3>
-        <ul class="product-list" id="Condimente"></ul>
-      </div>
-
-      <div class="category" data-category="Băuturi">
-        <h3>Băuturi</h3>
-        <ul class="product-list" id="Bauturi"></ul>
-      </div>
-
-      <div class="category" data-category="Produse de curățenie">
-        <h3>Produse de curățenie</h3>
-        <ul class="product-list" id="Curatenie"></ul>
-      </div>
-
-      <div class="category" data-category="Altele">
-        <h3>Altele</h3>
-        <ul class="product-list" id="Altele"></ul>
-      </div>
-
-    </div>
-  </div>
-
-  <script type="module" src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
