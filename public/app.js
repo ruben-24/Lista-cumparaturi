@@ -200,7 +200,8 @@ function renderList(shop) {
       const ul = document.createElement("ul");
       categorized[cat].forEach(item => {
         const li = document.createElement("li");
-        li.textContent = item.cantitate
+        // MODIFICARE: Afișează produsul chiar dacă cantitatea este goală
+        li.textContent = item.cantitate && item.cantitate.trim() !== ""
           ? `${item.name} — ${item.cantitate}`
           : item.name;
 
