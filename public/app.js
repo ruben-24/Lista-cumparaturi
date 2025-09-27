@@ -1,145 +1,162 @@
 // app.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// Cuvinte cheie pentru categorii
-const categoryMap = {
-  // Fructe
-  'măr': 'Fructe', 'mere': 'Fructe', 'mar': 'Fructe', 'mr': 'Fructe',
-  'banană': 'Fructe', 'banane': 'Fructe', 'bana': 'Fructe', 'bnn': 'Fructe',
-  'portocală': 'Fructe', 'portocale': 'Fructe', 'portocala': 'Fructe', 'portoc': 'Fructe',
-  'kiwi': 'Fructe', 'kw': 'Fructe',
-  'strugure': 'Fructe', 'struguri': 'Fructe', 'strug': 'Fructe',
-  'cireș': 'Fructe', 'cirese': 'Fructe', 'cires': 'Fructe',
-  'piersică': 'Fructe', 'piersici': 'Fructe', 'piers': 'Fructe',
-  'lămâie': 'Fructe', 'lamâie': 'Fructe', 'lamâi': 'Fructe', 'lami': 'Fructe',
-  'mandarină': 'Fructe', 'mandarine': 'Fructe', 'mandar': 'Fructe',
-  'pepene': 'Fructe', 'ananas': 'Fructe', 'căpșună': 'Fructe', 'capsuna': 'Fructe',
-
-  // Legume
-  'roșie': 'Legume', 'rosie': 'Legume', 'rosi': 'Legume', 'rosii': 'Legume', 'ros': 'Legume',
-  'cartof': 'Legume', 'cartofi': 'Legume', 'cart': 'Legume',
-  'ceapă': 'Legume', 'ceapa': 'Legume', 'cepe': 'Legume', 'cp': 'Legume',
-  'usturoi': 'Legume', 'ust': 'Legume',
-  'ardei': 'Legume', 'ardei gras': 'Legume', 'argr': 'Legume',
-  'morcov': 'Legume', 'morcovi': 'Legume', 'mrc': 'Legume',
-  'castravete': 'Legume', 'castraveti': 'Legume', 'castr': 'Legume',
-  'varză': 'Legume', 'varza': 'Legume', 'vrz': 'Legume',
-  'salată': 'Legume', 'salata': 'Legume', 'slt': 'Legume',
-  'dovlecel': 'Legume', 'dovlecei': 'Legume', 'dvlc': 'Legume',
-  'broccoli': 'Legume', 'broc': 'Legume',
-  'conopidă': 'Legume', 'conopida': 'Legume', 'conop': 'Legume',
-  'spanac': 'Legume', 'spn': 'Legume',
-  'cartof dulce': 'Legume', 'cartofi dulci': 'Legume', 'ctd': 'Legume',
-  'vinete': 'Legume', 'vânătă': 'Legume', 'vanata': 'Legume',
-
-  // Carne și mezeluri
-  'carne tocată': 'Carne', 'carne tocata': 'Carne', 'tocata': 'Carne',
-  'carne de pui': 'Carne', 'pui': 'Carne', 'piept pui': 'Carne', 'pulpe pui': 'Carne',
-  'carne de porc': 'Carne', 'porc': 'Carne', 'cotlet porc': 'Carne', 'ceafa porc': 'Carne',
-  'carne de vită': 'Carne', 'vita': 'Carne', 'vită': 'Carne', 'muschi vita': 'Carne',
-  'carne de miel': 'Carne', 'miel': 'Carne',
-  'carne de curcan': 'Carne', 'curcan': 'Carne',
-  'cârnați': 'Carne', 'carnati': 'Carne', 'cârnat': 'Carne', 'carnat': 'Carne',
-  'șuncă': 'Carne', 'sunca': 'Carne', 'șuncă feliată': 'Carne', 'sunca feliata': 'Carne',
-  'slănină': 'Carne', 'slanina': 'Carne',
-  'pastrama': 'Carne', 'pastramă': 'Carne',
-  'șnițel': 'Carne', 'snitel': 'Carne',
-  'pește': 'Carne', 'peste': 'Carne', 'somon': 'Carne', 'ton': 'Carne', 'cod': 'Carne',
-  'sardine': 'Carne', 'creveți': 'Carne', 'creveti': 'Carne',
-
-  // Lactate
-  'lapte': 'Lactate', 'lpt': 'Lactate',
-  'iaurt': 'Lactate', 'iaurturi': 'Lactate', 'iurt': 'Lactate',
-  'brânză': 'Lactate', 'branza': 'Lactate', 'branzeturi': 'Lactate', 'brnz': 'Lactate',
-  'telemea': 'Lactate', 'tlm': 'Lactate',
-  'caș': 'Lactate', 'cas': 'Lactate',
-  'smântână': 'Lactate', 'smantana': 'Lactate',
-  'unt': 'Lactate', 'margarina': 'Lactate',
-  'brânză topită': 'Lactate', 'branza topita': 'Lactate',
-
-  // Ouă
-  'ou': 'Ouă', 'ouă': 'Ouă', 'oua': 'Ouă',
-
-  // Condimente și ingrediente
-  'ulei': 'Condimente', 'ulei de floarea soarelui': 'Condimente', 'ulei de masline': 'Condimente',
-  'zahăr': 'Condimente', 'zahar': 'Condimente',
-  'făină': 'Condimente', 'faina': 'Condimente',
-  'sare': 'Condimente', 'piper': 'Condimente',
-  'miere': 'Condimente', 'sos': 'Condimente',
-  'ketchup': 'Condimente', 'maioneză': 'Condimente', 'maioneza': 'Condimente',
-  'orez': 'Condimente', 'paste': 'Condimente', 'fasole': 'Condimente', 'mazăre': 'Condimente', 'mazare': 'Condimente',
-
-  // Băuturi
-  'apă': 'Băuturi', 'apa': 'Băuturi', 'suc': 'Băuturi', 'sucuri': 'Băuturi',
-  'bere': 'Băuturi', 'vin': 'Băuturi', 'cafea': 'Băuturi', 'ceai': 'Băuturi',
-
-  // Pâine și panificație
-  'pâine': 'Pâine & Panificație', 'paine': 'Pâine & Panificație',
-  'chiflă': 'Pâine & Panificație', 'chifla': 'Pâine & Panificație',
-  'corn': 'Pâine & Panificație',
-  'baghetă': 'Pâine & Panificație', 'bagheta': 'Pâine & Panificație',
-
-  // Dulciuri și snacks
-  'ciocolată': 'Dulciuri', 'ciocolata': 'Dulciuri', 'biscuit': 'Dulciuri', 'biscuiti': 'Dulciuri',
-  'napolitane': 'Dulciuri', 'ciocolată albă': 'Dulciuri', 'ciocolata alba': 'Dulciuri',
-  'bomboane': 'Dulciuri', 'chips': 'Dulciuri', 'sticks': 'Dulciuri'
+// 🔹 Înlocuiește cu datele tale din Firebase Console
+const firebaseConfig = {
+  apiKey: "API_KEY",
+  authDomain: "PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://PROJECT_ID-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "PROJECT_ID",
+  storageBucket: "PROJECT_ID.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "APP_ID"
 };
 
-// Incarca lista din localStorage sau initializeaza empty
-let lista = JSON.parse(localStorage.getItem("listaCumparaturi")) || [];
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const listaRef = ref(db, "lista");
 
-// Functie de detectare categorie
+// 🔹 categorii + cuvinte cheie
+const categorii = {
+  "Fructe": ["mar","mere","banana","banane","portocala","portocale","kiwi","struguri","cirese","piersici","lamai","capsuni","ananas"],
+  "Legume": ["rosie","rosii","rosi","cartof","cartofi","ceapa","usturoi","ardei","morcov","morcovi","castravete","castraveti","varza","salata","dovlecel","broccoli","conopida","spanac","vinete"],
+  "Lactate": ["lapte","iaurt","branza","cascaval","smantana","unt","telemea","mozzarella","ricotta","mascarpone"],
+  "Carne": ["carne tocata","carne","pui","piept de pui","pulpe de pui","vita","vita tocata","porc","porc tocata","sunca","bacon","salam","carnati","pastrama","somon","ton","peste","creveti"],
+  "Ouă": ["ou","oua","ouă"],
+  "Condimente": ["sare","piper","oregano","busuioc","cimbru","paprika","boia","curry","scortisoara","coriandru","chili","ghimbir"],
+  "Băuturi": ["apa","suc","bere","vin","cafea","ceai","cola","fanta","whiskey","rom"],
+  "Pâine": ["paine","pâine","bagheta","chifla","corn","covrigi","patiserie"],
+  "Dulciuri": ["ciocolata","biscuiti","bomboane","chips","napolitane","sticks"],
+  "Altele": []
+};
+
+// funcție detectare categorie
 function detecteazaCategorie(nume) {
-    nume = nume.toLowerCase();
-    for (const [categorie, cuvinte] of Object.entries(categorii)) {
-        if (cuvinte.some(c => nume.includes(c))) return categorie;
-    }
-    return "Altele";
+  const lower = nume.toLowerCase();
+  for (const [cat, words] of Object.entries(categorii)) {
+    if (words.some(w => lower.includes(w))) return cat;
+  }
+  return "Altele";
 }
 
-// Functie de adaugare produs
-function adaugaProdus(nume) {
-    const categorie = detecteazaCategorie(nume);
-    lista.push({nume, categorie});
-    localStorage.setItem("listaCumparaturi", JSON.stringify(lista));
-    afiseazaLista();
+// refs UI
+const form = document.getElementById("formProdus");
+const input = document.getElementById("inputProdus");
+const listaDiv = document.getElementById("lista");
+const msg = document.getElementById("msgStatus");
+const clearBtn = document.getElementById("clearChecked");
+
+function showMsg(text, timeout=1500) {
+  msg.textContent = text;
+  msg.style.opacity = "1";
+  setTimeout(()=> msg.style.opacity="0", timeout);
 }
 
-// Functie de afisare lista
-function afiseazaLista() {
-    const container = document.getElementById("lista");
-    container.innerHTML = "";
-
-    // Sorteaza pe categorii
-    const grupat = {};
-    lista.forEach(item => {
-        if (!grupat[item.categorie]) grupat[item.categorie] = [];
-        grupat[item.categorie].push(item.nume);
-    });
-
-    for (const [categorie, produse] of Object.entries(grupat)) {
-        const h3 = document.createElement("h3");
-        h3.textContent = categorie;
-        container.appendChild(h3);
-
-        const ul = document.createElement("ul");
-        produse.forEach(p => {
-            const li = document.createElement("li");
-            li.textContent = p;
-            ul.appendChild(li);
-        });
-        container.appendChild(ul);
-    }
-}
-
-// Form submit
-document.getElementById("formProdus").addEventListener("submit", e => {
-    e.preventDefault();
-    const input = document.getElementById("inputProdus");
-    if (input.value.trim() !== "") {
-        adaugaProdus(input.value.trim());
-        input.value = "";
-    }
+// Adaugă produs
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  const val = input.value.trim();
+  if (!val) return;
+  const cat = detecteazaCategorie(val);
+  const itemRef = push(listaRef);
+  set(itemRef, {
+    id: itemRef.key,
+    nume: val,
+    categorie: cat,
+    checked: false,
+    createdAt: Date.now()
+  });
+  input.value = "";
+  showMsg(`Adăugat la ${cat}`);
 });
 
-// Initial display
-afiseazaLista();
+// Afișează lista live
+onValue(listaRef, snapshot => {
+  const data = snapshot.val() || {};
+  const items = Object.values(data);
+  listaDiv.innerHTML = "";
+
+  // grupare pe categorii
+  const grupat = {};
+  items.forEach(it => {
+    if (!grupat[it.categorie]) grupat[it.categorie] = [];
+    grupat[it.categorie].push(it);
+  });
+
+  const ordine = Object.keys(categorii).concat(["Altele"]);
+  ordine.forEach(cat => {
+    if (!grupat[cat]) return;
+    const card = document.createElement("div");
+    card.className = "categorie-card";
+
+    const h3 = document.createElement("h3");
+    h3.textContent = `${cat} (${grupat[cat].length})`;
+    card.appendChild(h3);
+
+    const ul = document.createElement("ul");
+    grupat[cat].forEach(item => {
+      const li = document.createElement("li");
+
+      const left = document.createElement("div");
+      left.style.display = "flex";
+      left.style.alignItems = "center";
+      left.style.gap = "10px";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = item.checked;
+      cb.addEventListener("change", () => {
+        update(ref(db, `lista/${item.id}`), { checked: cb.checked });
+      });
+
+      const span = document.createElement("span");
+      span.textContent = item.nume;
+      if (item.checked) span.style.textDecoration = "line-through";
+
+      left.appendChild(cb);
+      left.appendChild(span);
+
+      const actions = document.createElement("div");
+      const edit = document.createElement("button");
+      edit.textContent = "Editează";
+      edit.className = "btn-edit";
+      edit.addEventListener("click", () => {
+        const nou = prompt("Editează produsul:", item.nume);
+        if (nou) {
+          update(ref(db, `lista/${item.id}`), {
+            nume: nou,
+            categorie: detecteazaCategorie(nou)
+          });
+        }
+      });
+
+      const del = document.createElement("button");
+      del.textContent = "Șterge";
+      del.className = "btn-del";
+      del.addEventListener("click", () => {
+        remove(ref(db, `lista/${item.id}`));
+      });
+
+      actions.appendChild(edit);
+      actions.appendChild(del);
+
+      li.appendChild(left);
+      li.appendChild(actions);
+      ul.appendChild(li);
+    });
+
+    card.appendChild(ul);
+    listaDiv.appendChild(card);
+  });
+});
+
+// Șterge bifate
+clearBtn.addEventListener("click", () => {
+  onValue(listaRef, snapshot => {
+    const data = snapshot.val() || {};
+    Object.values(data).forEach(item => {
+      if (item.checked) remove(ref(db, `lista/${item.id}`));
+    });
+  }, { onlyOnce: true });
+});
