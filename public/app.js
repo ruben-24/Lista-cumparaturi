@@ -1,8 +1,8 @@
-// Import Firebase
+// Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-// Config Firebase (înlocuiește cu datele tale)
+// Config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAhN-DQQqWLo7s2SHMEHbp67P7mPqips3k",
   authDomain: "lista--cumparaturi.firebaseapp.com",
@@ -14,131 +14,123 @@ const firebaseConfig = {
   measurementId: "G-045KJZYQ9T"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Select DOM elements
+// DOM
 const formProdus = document.getElementById("formProdus");
 const inputProdus = document.getElementById("inputProdus");
 const msgStatus = document.getElementById("msgStatus");
-const listaGeneral = document.getElementById("lista");
-const listaLidl = document.getElementById("lista-lidl");
-const listaKaufland = document.getElementById("lista-kaufland");
 const clearCheckedBtn = document.getElementById("clearChecked");
+const magazinSelect = document.getElementById("magazinSelect");
 
-// Categorie keywords
+const tabs = {
+  general: document.getElementById("lista-general"),
+  aldi: document.getElementById("lista-aldi"),
+  dm: document.getElementById("lista-dm"),
+  freesnapf: document.getElementById("lista-freesnapf"),
+  rossmann: document.getElementById("lista-rossmann"),
+  kaufland: document.getElementById("lista-kaufland"),
+  lidl: document.getElementById("lista-lidl"),
+};
+
+// Categorii
 const categorii = {
   "Legume & Fructe": ["rosie","mere","banane","castravete","morcov","ceapa","cartof","salata","ardei","pepene","varza","usturoi","lămâie","avocado"],
   "Lactate": ["lapte","iaurt","branza","unt","smantana","cascaval"],
-  "Carne & Pește": ["carne tocata","pui","vita","somon","ton","oua"],
+  "Carne & Pește": ["carne","pui","vita","somon","ton","oua"],
   "Panificație": ["paine","corn","bagheta","chifle"],
   "Băuturi": ["apa","suc","bere","vin","ceai","cafea"],
   "Condimente & Uleiuri": ["sare","piper","ulei","otet","sos","miere","mustar"]
 };
 
-// Creează taburile în HTML
-const tabs = {
-  general: listaGeneral,
-  aldi: listaAldi,
-  dm:listaDm,
-  freesnapf:listaFreesnapf,
-  rossmann:listaRossmann,
-  kaufland: listaKaufland,
-  lidl: listaLidl,
-};
-
 // Form submit
 formProdus.addEventListener("submit", e => {
   e.preventDefault();
+  const shop = magazinSelect.value;
   const text = inputProdus.value.trim();
-  if (text === "") return;
-  addProdus("general", text); // Adaugă implicit în General
+  if (!text) return;
+  addProdus(shop, text);
   inputProdus.value = "";
 });
 
-// Adaugă produs în DB
+// Adaugă produs
 function addProdus(shop, text) {
   const newRef = ref(db, `products/${shop}`);
   push(newRef, { name: text });
-  msgStatus.textContent = `Produs adăugat în ${shop}!`;
+  msgStatus.textContent = `Produs adăugat la ${shop}`;
   msgStatus.style.opacity = 1;
-  setTimeout(() => msgStatus.style.opacity = 0, 1500);
+  setTimeout(() => msgStatus.style.opacity = 0, 2000);
 }
 
-// Render listă
+// Render
 function renderList(shop) {
   const listaDiv = tabs[shop];
-  listaDiv.innerHTML = "";
-  const dbRef = ref(db, `products/${shop}`);
-  onValue(dbRef, snapshot => {
-    const data = snapshot.val();
-    if (!data) return;
+  const shopRef = ref(db, `products/${shop}`);
+  onValue(shopRef, snapshot => {
+    const data = snapshot.val() || {};
+    const items = Object.entries(data).map(([id, val]) => ({ id, ...val }));
 
-    // Grupare pe categorii
+    // Categorize
     const categorized = {};
-    Object.values(data).forEach(item => {
-      let gasit = false;
+    items.forEach(item => {
+      let found = false;
       for (const cat in categorii) {
-        for (const keyword of categorii[cat]) {
-          if (item.name.toLowerCase().includes(keyword)) {
-            if (!categorized[cat]) categorized[cat] = [];
-            categorized[cat].push({ ...item });
-            gasit = true;
-            break;
-          }
+        if (categorii[cat].some(word => item.name.toLowerCase().includes(word))) {
+          categorized[cat] = categorized[cat] || [];
+          categorized[cat].push(item);
+          found = true;
+          break;
         }
-        if (gasit) break;
       }
-      if (!gasit) {
-        if (!categorized["Altele"]) categorized["Altele"] = [];
-        categorized["Altele"].push({ ...item });
+      if (!found) {
+        categorized["Altele"] = categorized["Altele"] || [];
+        categorized["Altele"].push(item);
       }
     });
 
-    // Construiește HTML
+    listaDiv.innerHTML = "";
     for (const cat in categorized) {
-      const divCat = document.createElement("div");
-      divCat.className = "categorie-card";
+      const card = document.createElement("div");
+      card.className = "categorie-card";
       const h3 = document.createElement("h3");
       h3.textContent = cat;
-      divCat.appendChild(h3);
+      card.appendChild(h3);
       const ul = document.createElement("ul");
-      categorized[cat].forEach(prod => {
+      categorized[cat].forEach(item => {
         const li = document.createElement("li");
-        li.textContent = prod.name;
-        const btnDel = document.createElement("button");
-        btnDel.textContent = "Șterge";
-        btnDel.className = "btn-del";
-        btnDel.onclick = () => removeProdus(shop, prod.name);
-        li.appendChild(btnDel);
+        li.textContent = item.name;
+        const btn = document.createElement("button");
+        btn.textContent = "Șterge";
+        btn.className = "btn-del";
+        btn.onclick = () => {
+          const itemRef = ref(db, `products/${shop}/${item.id}`);
+          remove(itemRef);
+        };
+        li.appendChild(btn);
         ul.appendChild(li);
       });
-      divCat.appendChild(ul);
-      listaDiv.appendChild(divCat);
+      card.appendChild(ul);
+      listaDiv.appendChild(card);
     }
   });
 }
 
-// Ștergere produs
-function removeProdus(shop, name) {
-  const dbRef = ref(db, `products/${shop}`);
-  onValue(dbRef, snapshot => {
-    const data = snapshot.val();
-    for (const key in data) {
-      if (data[key].name === name) {
-        remove(ref(db, `products/${shop}/${key}`));
-      }
-    }
-  }, { onlyOnce: true });
-}
-
-// Clear checked (nu avem checkbox momentan, doar exemplu)
+// Clear all
 clearCheckedBtn.addEventListener("click", () => {
-  Object.keys(tabs).forEach(shop => {
-    remove(ref(db, `products/${shop}`));
-  });
+  const shop = magazinSelect.value;
+  const shopRef = ref(db, `products/${shop}`);
+  remove(shopRef);
 });
 
-// Initialize render
-Object.keys(tabs).forEach(shop => renderList(shop));
+// Schimbă magazin
+magazinSelect.addEventListener("change", () => {
+  const shop = magazinSelect.value;
+  for (const key in tabs) {
+    tabs[key].parentElement.style.display = key === shop ? "block" : "none";
+  }
+  renderList(shop);
+});
+
+// Init
+renderList("general");
