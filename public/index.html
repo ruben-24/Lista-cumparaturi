@@ -2,82 +2,115 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lista de cumpărături</title>
 <style>
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to right, #ffecd2, #fcb69f);
-    padding: 20px;
-    max-width: 700px;
-    margin: auto;
+  body {
+    font-family: system-ui, sans-serif;
+    background: #fdfdfd;
+    padding: 15px;
+    margin: 0;
     color: #333;
-}
+    max-width: 800px;
+    margin-inline: auto;
+  }
 
-h1 {
+  h1 {
     text-align: center;
-    color: #2c3e50;
-    margin-bottom: 30px;
-}
+    color: #222;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+  }
 
-form {
+  form {
     display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
-}
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
 
-input[type="text"] {
+  input[type="text"] {
     flex: 1;
-    padding: 12px 15px;
-    border-radius: 10px;
-    border: none;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    font-size: 16px;
-}
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    min-width: 0;
+  }
 
-button {
-    padding: 12px 20px;
-    border-radius: 10px;
+  button {
+    padding: 12px 18px;
+    border-radius: 8px;
     border: none;
-    background-color: #ff7f50;
+    background: #007aff;
     color: white;
     font-weight: bold;
+    font-size: 1em;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
+  }
 
-button:hover {
-    background-color: #ff4500;
-}
+  button:hover {
+    background: #005fcc;
+  }
 
-.categorie-card {
-    background: rgba(255,255,255,0.8);
-    border-radius: 15px;
-    padding: 15px 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
+  #msgStatus {
+    text-align: center;
+    font-size: 0.9em;
+    color: green;
+    margin-bottom: 10px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
 
-.categorie-card h3 {
-    margin-top: 0;
-    color: #e74c3c;
-}
+  .categorie-card {
+    margin-bottom: 18px;
+  }
 
-.categorie-card ul {
+  .categorie-card h3 {
+    margin: 8px 0;
+    font-size: 1.2em;
+    color: #007aff;
+  }
+
+  .categorie-card ul {
     list-style: none;
-    padding-left: 0;
-}
+    padding: 0;
+    margin: 0;
+  }
 
-.categorie-card li {
-    padding: 8px 0;
-    border-bottom: 1px solid #ddd;
-    transition: transform 0.2s, background 0.2s;
-    border-radius: 5px;
-}
+  .categorie-card li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1em;
+  }
 
-.categorie-card li:hover {
-    background-color: #ffe5d4;
-    transform: translateX(5px);
-}
+  .categorie-card li:last-child {
+    border-bottom: none;
+  }
+
+  .btn-del, .btn-edit {
+    margin-left: 6px;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .btn-del { background: #ff3b30; color: white; }
+  .btn-edit { background: #34c759; color: white; }
+
+  .btn-del:hover { background: #d32f2f; }
+  .btn-edit:hover { background: #2e8b57; }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 1.5em; }
+    .categorie-card li { font-size: 1em; }
+    button, input[type="text"] { font-size: 1em; }
+  }
 </style>
 </head>
 <body>
@@ -85,12 +118,17 @@ button:hover {
 <h1>Lista de cumpărături</h1>
 
 <form id="formProdus">
-    <input type="text" id="inputProdus" placeholder="Adaugă produs..." required>
-    <button type="submit">Adaugă</button>
+  <input type="text" id="inputProdus" placeholder="Adaugă produs..." required>
+  <button type="submit">Adaugă</button>
 </form>
+
+<div id="msgStatus"></div>
 
 <div id="lista"></div>
 
-<script src="app.js"></script>
+<button id="clearChecked" style="margin-top:20px; width:100%; background:#ff9500;">Șterge bifate</button>
+
+<!-- Firebase SDK -->
+<script type="module" src="app.js" defer></script>
 </body>
 </html>
