@@ -12,15 +12,35 @@
 
     <!-- Tabs pentru magazine -->
     <div class="tabs">
-      <button class="tab-button active" data-magazin="Edeka">Edeka</button>
-      <button class="tab-button" data-magazin="Kaufland">Kaufland</button>
-      <button class="tab-button" data-magazin="Dm">Dm</button>
-      <button class="tab-button" data-magazin="Rossmann">Rossmann</button>
-      <button class="tab-button" data-magazin="Lidl">Lidl</button>
-      <button class="tab-button" data-magazin="Fressnapf">Fressnapf</button>
-      <button class="tab-button" data-magazin="Aldi">Aldi</button>
-    </div>
+  <button class="tab-button" onclick="openShop('Edeka')">Edeka</button>
+  <button class="tab-button" onclick="openShop('Kaufland')">Kaufland</button>
+  <button class="tab-button" onclick="openShop('DM')">DM</button>
+  <button class="tab-button" onclick="openShop('Rossmann')">Rossmann</button>
+  <button class="tab-button" onclick="openShop('Lidl')">Lidl</button>
+  <button class="tab-button" onclick="openShop('Fressnapf')">Fressnapf</button>
+  <button class="tab-button" onclick="openShop('Aldi')">Aldi</button>
+</div>
 
+<div id="shops-container">
+  <div class="shop" id="Edeka">
+    <h2>Edeka</h2>
+    <ul id="Edeka_Legume"></ul>
+    <ul id="Edeka_Fructe"></ul>
+    <ul id="Edeka_Carne"></ul>
+    <ul id="Edeka_Lactate"></ul>
+    <ul id="Edeka_Condimente"></ul>
+    <ul id="Edeka_Bauturi"></ul>
+    <ul id="Edeka_ProduseDeCuratenie"></ul>
+    <ul id="Edeka_Altele"></ul>
+  </div>
+
+  <div class="shop" id="Kaufland">...</div>
+  <div class="shop" id="DM">...</div>
+  <div class="shop" id="Rossmann">...</div>
+  <div class="shop" id="Lidl">...</div>
+  <div class="shop" id="Fressnapf">...</div>
+  <div class="shop" id="Aldi">...</div>
+</div>
     <!-- Formular adăugare produs -->
     <div class="add-product">
       <input type="text" id="productInput" placeholder="Produs nou...">
