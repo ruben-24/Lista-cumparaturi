@@ -20,6 +20,7 @@ const db = getDatabase(app);
 // DOM
 const formProdus = document.getElementById("formProdus");
 const inputProdus = document.getElementById("inputProdus");
+const inputCantitate = document.getElementById("inputCantitate");
 const msgStatus = document.getElementById("msgStatus");
 const clearCheckedBtn = document.getElementById("clearChecked");
 const magazinSelect = document.getElementById("magazinSelect");
@@ -36,39 +37,64 @@ const tabs = {
 
 // Categorii
 const categorii = {
-  "Legume & Fructe": ["rosie","portocale","rodie","struguri","mere","banane","castravete","morcov","ceapa","cartof","salata","ardei","pepene","varza","usturoi","lămâie","avocado"],
-  "Lactate": ["lapte","rama","margarina","iaurt","branza","unt","smantana","cascaval"],
-  "Carne & Pește": ["carne","bacon","pui","vita","somon","ton","oua"],
-  "Panificație": ["paine","pizza","covrigi","corn","bagheta","chifle"],
-  "Băuturi": ["apa","redbull","suc","bere","vin","ceai","cafea"],
-  "Condimente & Uleiuri": ["sare","piper","ulei","otet","sos","miere","mustar"]
-  "Detergenti": ["detergent wc","detergent vase","balsam rufe","detergent rufe","mirosici vase"]
-  "Congelate": ["pizza congelata"]
+  "Legume & Fructe": [
+    "rosie","portocale","rodie","struguri","mere","banane",
+    "castravete","morcov","ceapa","cartof","salata","ardei",
+    "pepene","varza","usturoi","lămâie","avocado"
+  ],
+  "Lactate": [
+    "lapte","rama","margarina","iaurt","branza","unt",
+    "smantana","cascaval"
+  ],
+  "Carne & Pește": [
+    "carne","bacon","pui","vita","somon","ton","oua"
+  ],
+  "Panificație": [
+    "paine","pizza","covrigi","corn","bagheta","chifle"
+  ],
+  "Băuturi": [
+    "apa","redbull","suc","bere","vin","ceai","cafea"
+  ],
+  "Condimente & Uleiuri": [
+    "sare","piper","ulei","otet","sos","miere","mustar"
+  ],
+  "Detergenți": [
+    "detergent wc","detergent vase","balsam rufe",
+    "detergent rufe","mirosici vase"
+  ],
+  "Congelate": [
+    "pizza congelata"
+  ]
 };
 
-// Form submit
+// === FORM SUBMIT ===
 formProdus.addEventListener("submit", e => {
   e.preventDefault();
   const shop = magazinSelect.value;
   const text = inputProdus.value.trim();
+  const cantitate = inputCantitate.value.trim() || "1";
+
   if (!text) return;
-  addProdus(shop, text);
+
+  addProdus(shop, text, cantitate);
   inputProdus.value = "";
+  inputCantitate.value = "";
 });
 
-// Adaugă produs
-function addProdus(shop, text) {
+// === ADD PRODUCT ===
+function addProdus(shop, text, cantitate) {
   const newRef = ref(db, `products/${shop}`);
-  push(newRef, { name: text });
+  push(newRef, { name: text, qty: cantitate });
   msgStatus.textContent = `Produs adăugat la ${shop}`;
   msgStatus.style.opacity = 1;
   setTimeout(() => msgStatus.style.opacity = 0, 2000);
 }
 
-// Render
+// === RENDER LIST ===
 function renderList(shop) {
   const listaDiv = tabs[shop];
   const shopRef = ref(db, `products/${shop}`);
+  
   onValue(shopRef, snapshot => {
     const data = snapshot.val() || {};
     const items = Object.entries(data).map(([id, val]) => ({ id, ...val }));
@@ -91,6 +117,7 @@ function renderList(shop) {
       }
     });
 
+    // Render UI
     listaDiv.innerHTML = "";
     for (const cat in categorized) {
       const card = document.createElement("div");
@@ -101,7 +128,7 @@ function renderList(shop) {
       const ul = document.createElement("ul");
       categorized[cat].forEach(item => {
         const li = document.createElement("li");
-        li.textContent = item.name;
+        li.textContent = `${item.qty} x ${item.name}`;
         const btn = document.createElement("button");
         btn.textContent = "Șterge";
         btn.className = "btn-del";
@@ -118,14 +145,14 @@ function renderList(shop) {
   });
 }
 
-// Clear all
+// === CLEAR ALL ===
 clearCheckedBtn.addEventListener("click", () => {
   const shop = magazinSelect.value;
   const shopRef = ref(db, `products/${shop}`);
   remove(shopRef);
 });
 
-// Schimbă magazin
+// === CHANGE SHOP ===
 magazinSelect.addEventListener("change", () => {
   const shop = magazinSelect.value;
   for (const key in tabs) {
@@ -134,5 +161,5 @@ magazinSelect.addEventListener("change", () => {
   renderList(shop);
 });
 
-// Init
+// === INIT ===
 renderList("general");
