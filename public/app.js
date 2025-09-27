@@ -36,12 +36,14 @@ const tabs = {
 
 // Categorii
 const categorii = {
-  "Legume & Fructe": ["rosie","mere","banane","castravete","morcov","ceapa","cartof","salata","ardei","pepene","varza","usturoi","lămâie","avocado"],
-  "Lactate": ["lapte","iaurt","branza","unt","smantana","cascaval"],
-  "Carne & Pește": ["carne","pui","vita","somon","ton","oua"],
-  "Panificație": ["paine","corn","bagheta","chifle"],
-  "Băuturi": ["apa","suc","bere","vin","ceai","cafea"],
+  "Legume & Fructe": ["rosie","portocale","rodie","struguri","mere","banane","castravete","morcov","ceapa","cartof","salata","ardei","pepene","varza","usturoi","lămâie","avocado"],
+  "Lactate": ["lapte","rama","margarina","iaurt","branza","unt","smantana","cascaval"],
+  "Carne & Pește": ["carne","bacon","pui","vita","somon","ton","oua"],
+  "Panificație": ["paine","pizza","covrigi","corn","bagheta","chifle"],
+  "Băuturi": ["apa","redbull","suc","bere","vin","ceai","cafea"],
   "Condimente & Uleiuri": ["sare","piper","ulei","otet","sos","miere","mustar"]
+  "Detergenti": ["detergent wc","detergent vase","balsam rufe","detergent rufe","mirosici vase"]
+  "Congelate": ["pizza congelata"]
 };
 
 // Form submit
