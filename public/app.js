@@ -1,136 +1,106 @@
 import { saveList, subscribeList } from './database.js';
 
-const magazines = ["Edeka","Kaufland","DM","Rossmann","Lidl","Fressnapf","Aldi"];
-let currentMagazin = magazines[0];
+const magazinTabs = document.getElementById('magazin-tabs');
+const shoppingListDiv = document.getElementById('shopping-list');
+const form = document.getElementById('add-form');
+const input = document.getElementById('product-input');
+
+const magazine = ["Edeka","Kaufland","DM","Rossmann","Lidl","Fressnapf","Aldi"];
+let currentMagazin = magazine[0];
 let shoppingLists = {};
 
-// Inițializează listele și ascultă schimbările în Firebase
-magazines.forEach(m => {
-  subscribeList(m, data => {
-    shoppingLists[m] = data || [];
-    if(m === currentMagazin) renderList();
-  });
-});
-
-// Cuvinte cheie pentru categorii
+// Categorii și cuvinte cheie
 const categorii = {
-  "Legume": ["rosie","rosii","castravete","morcov","ardei","salata","varza","ceapa","cartof","usturoi","spanac","broccoli","conopida"],
-  "Fructe": ["mar","mere","banana","banane","portocala","portocale","lamaie","capsuni","cirese","pere","struguri"],
-  "Lactate": ["lapte","iaurt","branza","unt","smantana","cascaval"],
-  "Carne": ["carne tocata","pui","vita","porc","sunca","carnati","salami"],
-  "Paine": ["paine","bagheta","chifle","cornuri"],
-  "Bauturi": ["apa","suc","bere","vin","ceai","cafea"],
-  "Condimente": ["sare","piper","ulei","otet","zahar","miere","mustar"],
-  "Haine/Igiena": ["hartie","sapun","detergent","sampon","periuta","pasta de dinti","servetele"]
+  "Legume": ["rosie","castravete","morcov","ceapa","ardei","varza","salata","usturoi","broccoli","cartof"],
+  "Fructe": ["mar","banana","portocala","para","capsuna","strugure","cirese","kiwi"],
+  "Lactate": ["lapte","iaurt","branza","unt","smantana"],
+  "Carne": ["carne","carne tocata","pui","vita","porc","sunca","carnati"],
+  "Paine & Cereale": ["paine","corn","croissant","cereale","faina"],
+  "Bauturi": ["apa","suc","bere","vin","cafea","ceai"],
+  "Condimente & Sosuri": ["sare","piper","ulei","otet","ketchup","mustar","sos"],
+  "Produse curatenie": ["detergent","sapun","hartie","servetele","dezinfectant"],
+  "Altele": []
 };
 
-const form = document.getElementById("add-form");
-const input = document.getElementById("product-input");
-const listaDiv = document.getElementById("shopping-list");
-const magazinTabs = document.getElementById("magazin-tabs");
-const msg = document.getElementById("msg");
-
-// Creare tab-uri magazine
-magazines.forEach(m => {
-  const btn = document.createElement("button");
-  btn.textContent = m;
-  btn.addEventListener("click", () => {
+// Creare taburi magazin
+magazine.forEach(m => {
+  const tab = document.createElement('div');
+  tab.className = 'tab';
+  tab.textContent = m;
+  if(m === currentMagazin) tab.classList.add('active');
+  tab.addEventListener('click', () => {
     currentMagazin = m;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
     renderList();
-    document.querySelectorAll("#magazin-tabs button").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
+    subscribeToFirebase();
   });
-  magazinTabs.appendChild(btn);
+  magazinTabs.appendChild(tab);
 });
-document.querySelector("#magazin-tabs button").classList.add("active");
+
+// Detectare categorie automat
+function detectCategory(produs) {
+  const text = produs.toLowerCase();
+  for(const cat in categorii) {
+    for(const key of categorii[cat]) {
+      if(text.includes(key)) return cat;
+    }
+  }
+  return "Altele";
+}
+
+function renderList() {
+  shoppingListDiv.innerHTML = '';
+  if(!shoppingLists[currentMagazin]) shoppingLists[currentMagazin] = [];
+  shoppingLists[currentMagazin].forEach((prod, index) => {
+    const div = document.createElement('div');
+    div.className = 'product-item';
+    const cat = detectCategory(prod.nume);
+    div.innerHTML = `
+      <label>
+        <input type="checkbox" ${prod.checked ? 'checked' : ''} data-index="${index}">
+        ${prod.nume} <span class="category-label">[${cat}]</span>
+      </label>
+      <button data-index="${index}">🗑️</button>
+    `;
+    shoppingListDiv.appendChild(div);
+  });
+}
+
+function subscribeToFirebase() {
+  subscribeList(currentMagazin, (data) => {
+    shoppingLists[currentMagazin] = data;
+    renderList();
+  });
+}
+
+// Initializare subscribe
+subscribeToFirebase();
 
 // Adaugare produs
-form.addEventListener("submit", e=>{
+form.addEventListener('submit', e => {
   e.preventDefault();
   if(!input.value.trim()) return;
-  const produs = {nume: input.value.trim(), checked: false};
+  const produs = { nume: input.value.trim(), checked: false };
   if(!shoppingLists[currentMagazin]) shoppingLists[currentMagazin] = [];
   shoppingLists[currentMagazin].push(produs);
-  input.value="";
+  input.value = '';
   saveAndRender();
 });
 
-// Salvare în Firebase și rerender
+// Toggle checkbox si stergere
+shoppingListDiv.addEventListener('click', e => {
+  const index = e.target.dataset.index;
+  if(index === undefined) return;
+  if(e.target.tagName === 'BUTTON') {
+    shoppingLists[currentMagazin].splice(index,1);
+  } else if(e.target.type === 'checkbox') {
+    shoppingLists[currentMagazin][index].checked = e.target.checked;
+  }
+  saveAndRender();
+});
+
 function saveAndRender() {
   saveList(currentMagazin, shoppingLists[currentMagazin]);
   renderList();
-  msg.style.opacity = 1;
-  msg.textContent = "Lista actualizată!";
-  setTimeout(()=>{msg.style.opacity=0;},1000);
-}
-
-// Renderizare lista
-function renderList(){
-  listaDiv.innerHTML = "";
-  const produse = shoppingLists[currentMagazin] || [];
-
-  Object.keys(categorii).forEach(cat=>{
-    const produseCat = produse.filter(p=>categorii[cat].some(k=>p.nume.toLowerCase().includes(k.toLowerCase())));
-    if(produseCat.length===0) return;
-
-    const card = document.createElement("div");
-    card.classList.add("categorie-card");
-    const h3 = document.createElement("h3");
-    h3.textContent = cat;
-    card.appendChild(h3);
-
-    const ul = document.createElement("ul");
-    produseCat.forEach(p=>{
-      const li = document.createElement("li");
-      li.innerHTML = `<span>${p.nume}</span>`;
-      const checkBox = document.createElement("input");
-      checkBox.type="checkbox";
-      checkBox.checked = p.checked;
-      checkBox.addEventListener("change", ()=>{ p.checked = checkBox.checked; saveAndRender(); });
-      const delBtn = document.createElement("button");
-      delBtn.classList.add("btn-del");
-      delBtn.textContent = "Șterge";
-      delBtn.addEventListener("click", ()=> {
-        shoppingLists[currentMagazin].splice(shoppingLists[currentMagazin].indexOf(p),1);
-        saveAndRender();
-      });
-      li.prepend(checkBox);
-      li.appendChild(delBtn);
-      ul.appendChild(li);
-    });
-
-    card.appendChild(ul);
-    listaDiv.appendChild(card);
-  });
-
-  // Produse care nu se încadrează în categorii
-  const produseAltele = produse.filter(p=>!Object.keys(categorii).some(cat=>categorii[cat].some(k=>p.nume.toLowerCase().includes(k.toLowerCase()))));
-  if(produseAltele.length>0){
-    const card = document.createElement("div");
-    card.classList.add("categorie-card");
-    const h3 = document.createElement("h3");
-    h3.textContent = "Altele";
-    card.appendChild(h3);
-    const ul = document.createElement("ul");
-    produseAltele.forEach(p=>{
-      const li = document.createElement("li");
-      li.innerHTML = `<span>${p.nume}</span>`;
-      const checkBox = document.createElement("input");
-      checkBox.type="checkbox";
-      checkBox.checked = p.checked;
-      checkBox.addEventListener("change", ()=>{ p.checked = checkBox.checked; saveAndRender(); });
-      const delBtn = document.createElement("button");
-      delBtn.classList.add("btn-del");
-      delBtn.textContent = "Șterge";
-      delBtn.addEventListener("click", ()=> {
-        shoppingLists[currentMagazin].splice(shoppingLists[currentMagazin].indexOf(p),1);
-        saveAndRender();
-      });
-      li.prepend(checkBox);
-      li.appendChild(delBtn);
-      ul.appendChild(li);
-    });
-    card.appendChild(ul);
-    listaDiv.appendChild(card);
-  }
 }
