@@ -1,90 +1,115 @@
-import { saveList, subscribeList } from "./database.js";
+// Initialize Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-// Magazin curent selectat
-let currentMagazin = "Edeka";
-
-// Cuvinte cheie pentru categorii
-const categoriesKeywords = {
-  "Legume": ["rosie","rosii","castravete","ardei","salata","ceapa","morcov","varza","broccoli","conopida","cartof"],
-  "Fructe": ["mar","mere","banana","banane","portocala","portocale","cirese","capsuni","piersica","pruna","lamâie"],
-  "Carne": ["carne","carne tocata","pui","vita","porc","curcan","slanina","sunca"],
-  "Lactate": ["lapte","iaurt","branza","smantana","unt","cascaval","oua"],
-  "Condimente": ["sare","piper","oregano","boia","scortisoara","cimbru","busuioc","ghimbir"],
-  "Bauturi": ["apa","suc","bere","vin","cafea","ceai","limonada","lapte"],
-  "Produse de curățenie": ["detergent","hartie","servetele","sapun","dezinfectant","solutie","burete"],
-  "Altele": []
+const firebaseConfig = {
+    apiKey: "AIzaSyAhN-DQQqWLo7s2SHMEHbp67P7mPqips3k",
+    authDomain: "lista--cumparaturi.firebaseapp.com",
+    databaseURL: "https://lista--cumparaturi-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "lista--cumparaturi",
+    storageBucket: "lista--cumparaturi.firebasestorage.app",
+    messagingSenderId: "1017722987139",
+    appId: "1:1017722987139:web:9a00866e9b5ace247131b6",
+    measurementId: "G-045KJZYQ9T"
 };
 
-// Elemente DOM
-const productInput = document.getElementById("productInput");
-const addBtn = document.getElementById("addBtn");
-const tabs = document.querySelectorAll(".tab-button");
-const listsContainer = document.getElementById("listsContainer");
+// Firebase setup
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-// Liste în memorie
-let lists = {};
+// Lista de magazine
+const shops = ["Edeka", "Kaufland", "DM", "Rossmann", "Lidl", "Fressnapf", "Aldi"];
 
-// Detectare tab selectat
-tabs.forEach(tab => {
-  tab.addEventListener("click", () => {
-    tabs.forEach(t => t.classList.remove("active"));
-    tab.classList.add("active");
-    currentMagazin = tab.dataset.magazin;
-    renderLists();
-  });
+// Taburi
+const tabsContainer = document.getElementById("tabs");
+shops.forEach((shop, index) => {
+    const btn = document.createElement("button");
+    btn.textContent = shop;
+    btn.classList.add("tab-button");
+    if (index === 0) btn.classList.add("active");
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.querySelectorAll(".shop").forEach(s => s.classList.remove("active"));
+        document.getElementById(shop).classList.add("active");
+    });
+    tabsContainer.appendChild(btn);
+});
+
+// Categorie keywords
+const categories = {
+    "Legume": ["rosie", "rosii", "castravete", "ardei", "ceapa", "morcov", "varza", "cartof", "salata"],
+    "Fructe": ["mar", "mere", "banana", "pere", "portocala", "mandarina", "cirese", "capsuni", "kiwi"],
+    "Lactate": ["lapte", "branza", "iaurt", "unt", "smantana", "cascaval"],
+    "Carne": ["carne tocata", "pui", "vita", "porc", "sunca", "carnati"],
+    "Condimente": ["sare", "piper", "boia", "oregano", "cimbru", "ulei", "otet", "mustar"],
+    "Panificatie": ["paine", "chifle", "corn", "bagheta"],
+    "Bauturi": ["apa", "suc", "bere", "vin", "cafea", "ceai"],
+    "Curatenie": ["detergent", "hartie igienica", "servetele", "sapun", "dezinfectant"],
+    "Diverse": [] // Tot ce nu se incadreaza in categoriile de mai sus
+};
+
+// Functie pentru a determina categoria unui produs
+function getCategory(product) {
+    product = product.toLowerCase();
+    for (const [cat, keywords] of Object.entries(categories)) {
+        if (keywords.some(k => product.includes(k))) return cat;
+    }
+    return "Diverse";
+}
+
+// Creeaza listele pentru fiecare magazin
+shops.forEach(shop => {
+    const shopDiv = document.createElement("div");
+    shopDiv.id = shop;
+    shopDiv.classList.add("shop");
+    if (shop === "Edeka") shopDiv.classList.add("active");
+    document.body.appendChild(shopDiv);
 });
 
 // Adaugare produs
-addBtn.addEventListener("click", () => {
-  const product = productInput.value.trim();
-  if (!product) return;
+document.getElementById("add-button").addEventListener("click", () => {
+    const input = document.getElementById("product-input");
+    const productName = input.value.trim();
+    if (!productName) return;
 
-  if (!lists[currentMagazin]) lists[currentMagazin] = [];
-  lists[currentMagazin].push(product);
+    const activeShop = document.querySelector(".shop.active").id;
+    const category = getCategory(productName);
 
-  saveList(currentMagazin, lists[currentMagazin]);
-  productInput.value = "";
+    push(ref(db, activeShop), { name: productName, category });
+
+    input.value = "";
 });
 
-// Sorteaza produsul pe categorie
-function getCategory(product) {
-  const lower = product.toLowerCase();
-  for (let [cat, keywords] of Object.entries(categoriesKeywords)) {
-    for (let key of keywords) {
-      if (lower.includes(key)) return cat;
-    }
-  }
-  return "Altele";
-}
+// Afisare produse in timp real
+shops.forEach(shop => {
+    const shopRef = ref(db, shop);
+    onValue(shopRef, snapshot => {
+        const data = snapshot.val();
+        const shopDiv = document.getElementById(shop);
+        shopDiv.innerHTML = ""; // goleste continutul
 
-// Randare liste
-function renderLists() {
-  if (!lists[currentMagazin]) lists[currentMagazin] = [];
+        if (!data) return;
 
-  Object.keys(categoriesKeywords).forEach(cat => {
-    const ul = document.getElementById(cat.replace(/ /g,""));
-    if (ul) ul.innerHTML = "";
-  });
+        // Grupa pe categorii
+        const grouped = {};
+        Object.values(data).forEach(item => {
+            if (!grouped[item.category]) grouped[item.category] = [];
+            grouped[item.category].push(item.name);
+        });
 
-  lists[currentMagazin].forEach(prod => {
-    const cat = getCategory(prod);
-    const ul = document.getElementById(cat.replace(/ /g,""));
-    if (ul) {
-      const li = document.createElement("li");
-      li.textContent = prod;
-      li.classList.add("product-item");
-      ul.appendChild(li);
-    }
-  });
-}
+        for (const [cat, items] of Object.entries(grouped)) {
+            const h3 = document.createElement("h3");
+            h3.textContent = cat;
+            shopDiv.appendChild(h3);
 
-// Ascultare Firebase in timp real
-tabs.forEach(tab => {
-  subscribeList(tab.dataset.magazin, (data) => {
-    lists[tab.dataset.magazin] = data || [];
-    if (tab.dataset.magazin === currentMagazin) renderLists();
-  });
+            const ul = document.createElement("ul");
+            items.forEach(i => {
+                const li = document.createElement("li");
+                li.textContent = i;
+                ul.appendChild(li);
+            });
+            shopDiv.appendChild(ul);
+        }
+    });
 });
-
-// Initial render
-renderLists();
