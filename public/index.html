@@ -22,32 +22,83 @@
       margin-bottom: 20px;
     }
 
-    /* BURGER MENU */
-    .burger {
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 10px;
+    /* BURGER MENU STILIZAT */
+    .shop-selector {
+      position: relative;
       margin-bottom: 15px;
     }
-    select {
+    
+    .shop-trigger {
       width: 100%;
       padding: 12px;
       border-radius: 8px;
-      border: none;
+      border: 1px solid #333;
       background: #1e1e1e;
       color: #fff;
       font-size: 1em;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .shop-trigger:hover {
+      background: #2a2a2a;
+    }
+    
+    .shop-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      margin-top: 5px;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    
+    .shop-dropdown.active {
+      display: block;
+    }
+    
+    .shop-option {
+      padding: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #333;
+      transition: background 0.2s;
+    }
+    
+    .shop-option:last-child {
+      border-bottom: none;
+    }
+    
+    .shop-option:hover {
+      background: #2a2a2a;
     }
 
     /* FORM */
-    form {
+    .product-form {
       display: flex;
       gap: 8px;
       margin-bottom: 15px;
       flex-wrap: wrap;
     }
-    input[type="text"] {
+    
+    .product-input {
+      flex: 2;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #1e1e1e;
+      color: #fff;
+      font-size: 1em;
+      min-width: 0;
+    }
+    
+    .quantity-input {
       flex: 1;
       padding: 12px;
       border-radius: 8px;
@@ -57,7 +108,8 @@
       font-size: 1em;
       min-width: 0;
     }
-    button {
+    
+    .add-btn {
       padding: 12px 18px;
       border-radius: 8px;
       border: none;
@@ -66,8 +118,12 @@
       font-weight: bold;
       font-size: 1em;
       cursor: pointer;
+      white-space: nowrap;
     }
-    button:hover { background: #005fcc; }
+    
+    .add-btn:hover { 
+      background: #005fcc; 
+    }
 
     #msgStatus {
       text-align: center;
@@ -86,16 +142,19 @@
       margin-bottom: 18px;
       box-shadow: 0 3px 8px rgba(0,0,0,0.5);
     }
+    
     .categorie-card h3 {
       margin: 8px 0;
       font-size: 1.2em;
       color: #ffa500;
     }
+    
     .categorie-card ul {
       list-style: none;
       padding: 0;
       margin: 0;
     }
+    
     .categorie-card li {
       padding: 10px;
       border-bottom: 1px solid #333;
@@ -104,7 +163,10 @@
       align-items: center;
       font-size: 1em;
     }
-    .categorie-card li:last-child { border-bottom: none; }
+    
+    .categorie-card li:last-child { 
+      border-bottom: none; 
+    }
 
     .btn-del {
       margin-left: 6px;
@@ -116,7 +178,10 @@
       background: #ff3b30;
       color: white;
     }
-    .btn-del:hover { background: #d32f2f; }
+    
+    .btn-del:hover { 
+      background: #d32f2f; 
+    }
 
     #clearChecked {
       margin-top: 20px;
@@ -129,38 +194,74 @@
       border: none;
       cursor: pointer;
     }
-    #clearChecked:hover { background: #cc7a00; }
+    
+    #clearChecked:hover { 
+      background: #cc7a00; 
+    }
 
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .tab-content { 
+      display: none; 
+    }
+    
+    .tab-content.active { 
+      display: block; 
+    }
 
     @media (max-width: 600px) {
-      h1 { font-size: 1.5em; }
-      button, input[type="text"], select { font-size: 1em; }
+      h1 { 
+        font-size: 1.5em; 
+      }
+      
+      .product-form {
+        flex-direction: column;
+      }
+      
+      .product-input, .quantity-input, .add-btn {
+        width: 100%;
+      }
+      
+      .shop-trigger, .product-input, .quantity-input, .add-btn { 
+        font-size: 1em; 
+      }
     }
   </style>
 </head>
 <body>
   <h1>🛒 Lista de cumpărături</h1>
 
-  <!-- BURGER MENU (MUTAT SUS) -->
-  <div class="burger">
-    <select id="magazinSelect">
-      <option value="general">General</option>
-      <option value="aldi">Aldi</option>
-      <option value="dm">DM</option>
-      <option value="freesnapf">Freesnapf</option>
-      <option value="rossmann">Rossmann</option>
-      <option value="kaufland">Kaufland</option>
-      <option value="lidl">Lidl</option>
-    </select>
+  <!-- SELECTOR MAGAZIN STILIZAT -->
+  <div class="shop-selector">
+    <div class="shop-trigger" id="shopTrigger">
+      <span>🏪 SHOP</span>
+      <span>▼</span>
+    </div>
+    <div class="shop-dropdown" id="shopDropdown">
+      <div class="shop-option" data-shop="general">🛒 General</div>
+      <div class="shop-option" data-shop="aldi">🛒 Aldi</div>
+      <div class="shop-option" data-shop="dm">🛒 DM</div>
+      <div class="shop-option" data-shop="freesnapf">🛒 Freesnapf</div>
+      <div class="shop-option" data-shop="rossmann">🛒 Rossmann</div>
+      <div class="shop-option" data-shop="kaufland">🛒 Kaufland</div>
+      <div class="shop-option" data-shop="lidl">🛒 Lidl</div>
+    </div>
   </div>
 
-  <!-- FORMULAR (MUTAT DUPĂ SELECTOR) -->
-  <form id="formProdus">
-    <input type="text" id="inputProdus" placeholder="Adaugă produs..." required>
-    <input type="text" id="inputCantitate" placeholder="Cantitate (ex: 2, 1kg)">
-    <button type="submit">Adaugă</button>
+  <!-- Selector hidden pentru compatibilitate cu codul existent -->
+  <select id="magazinSelect" style="display: none;">
+    <option value="general">General</option>
+    <option value="aldi">Aldi</option>
+    <option value="dm">DM</option>
+    <option value="freesnapf">Freesnapf</option>
+    <option value="rossmann">Rossmann</option>
+    <option value="kaufland">Kaufland</option>
+    <option value="lidl">Lidl</option>
+  </select>
+
+  <!-- FORMULAR -->
+  <form id="formProdus" class="product-form">
+    <input type="text" id="inputProdus" class="product-input" placeholder="Adaugă produs..." required>
+    <input type="text" id="inputCantitate" class="quantity-input" placeholder="Cantitate (ex: 2, 1kg)">
+    <button type="submit" class="add-btn">Adaugă</button>
   </form>
   <div id="msgStatus"></div>
 
@@ -181,5 +282,47 @@
   </main>
 
   <script type="module" src="app.js"></script>
+  
+  <script>
+    // Script pentru dropdown-ul personalizat
+    document.addEventListener('DOMContentLoaded', function() {
+      const shopTrigger = document.getElementById('shopTrigger');
+      const shopDropdown = document.getElementById('shopDropdown');
+      const shopOptions = document.querySelectorAll('.shop-option');
+      const magazinSelect = document.getElementById('magazinSelect');
+      
+      // Toggle dropdown
+      shopTrigger.addEventListener('click', function() {
+        shopDropdown.classList.toggle('active');
+      });
+      
+      // Selectare magazin
+      shopOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const shop = this.getAttribute('data-shop');
+          const shopName = this.textContent.replace('🛒 ', '');
+          
+          // Actualizează trigger-ul
+          shopTrigger.innerHTML = `<span>🏪 ${shopName}</span><span>▼</span>`;
+          
+          // Închide dropdown-ul
+          shopDropdown.classList.remove('active');
+          
+          // Actualizează selectorul hidden
+          magazinSelect.value = shop;
+          
+          // Trigger change event pentru a actualiza lista
+          magazinSelect.dispatchEvent(new Event('change'));
+        });
+      });
+      
+      // Închide dropdown când dai click în afara
+      document.addEventListener('click', function(event) {
+        if (!shopTrigger.contains(event.target) && !shopDropdown.contains(event.target)) {
+          shopDropdown.classList.remove('active');
+        }
+      });
+    });
+  </script>
 </body>
 </html>
