@@ -4,13 +4,13 @@ import { getDatabase, ref, push, set, onValue, remove, update } from "https://ww
 
 // 🔹 Înlocuiește cu datele tale din Firebase Console
 const firebaseConfig = {
-  apiKey: "API_KEY",
-  authDomain: "PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://PROJECT_ID-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "PROJECT_ID",
-  storageBucket: "PROJECT_ID.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
+  apiKey: "AIzaSyAhN-DQQqWLo7s2SHMEHbp67P7mPqips3k",
+  authDomain: "lista--cumparaturi.firebaseapp.com",
+  databaseURL: "https://lista--cumparaturi-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "proiectul-tau",
+  storageBucket: "proiectul-tau.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef123456"
 };
 
 const app = initializeApp(firebaseConfig);
