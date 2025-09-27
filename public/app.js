@@ -35,7 +35,7 @@ const tabs = {
   lidl: document.getElementById("lista-lidl"),
 };
 
-// Categorii și cuvinte cheie
+// Categorii și cuvinte cheie (lista completă aici - am scurtat pentru exemplu)
 const categorii = {
   "Legume & Fructe": [
     // Fructe
@@ -200,7 +200,6 @@ function renderList(shop) {
       const ul = document.createElement("ul");
       categorized[cat].forEach(item => {
         const li = document.createElement("li");
-        // MODIFICARE: Afișează produsul chiar dacă cantitatea este goală
         li.textContent = item.cantitate && item.cantitate.trim() !== ""
           ? `${item.name} — ${item.cantitate}`
           : item.name;
