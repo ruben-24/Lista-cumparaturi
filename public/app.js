@@ -1,162 +1,176 @@
-// app.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+// Import Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// 🔹 Înlocuiește cu datele tale din Firebase Console
+// 🔹 Config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAhN-DQQqWLo7s2SHMEHbp67P7mPqips3k",
   authDomain: "lista--cumparaturi.firebaseapp.com",
   databaseURL: "https://lista--cumparaturi-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "lista--cumparaturi",
   storageBucket: "lista--cumparaturi.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef123456"
+  messagingSenderId: "1017722987139",
+  appId: "1:1017722987139:web:9a00866e9b5ace247131b6",
+  measurementId: "G-045KJZYQ9T"
 };
 
+// 🔹 Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const listaRef = ref(db, "lista");
 
-// 🔹 categorii + cuvinte cheie
+// 🔹 Categorii și cuvinte cheie
 const categorii = {
-  "Fructe": ["mar","mere","banana","banane","portocala","portocale","kiwi","struguri","cirese","piersici","lamai","capsuni","ananas"],
-  "Legume": ["rosie","rosii","rosi","cartof","cartofi","ceapa","usturoi","ardei","morcov","morcovi","castravete","castraveti","varza","salata","dovlecel","broccoli","conopida","spanac","vinete"],
-  "Lactate": ["lapte","iaurt","branza","cascaval","smantana","unt","telemea","mozzarella","ricotta","mascarpone"],
-  "Carne": ["carne tocata","carne","pui","piept de pui","pulpe de pui","vita","vita tocata","porc","porc tocata","sunca","bacon","salam","carnati","pastrama","somon","ton","peste","creveti"],
-  "Ouă": ["ou","oua","ouă"],
-  "Condimente": ["sare","piper","oregano","busuioc","cimbru","paprika","boia","curry","scortisoara","coriandru","chili","ghimbir"],
-  "Băuturi": ["apa","suc","bere","vin","cafea","ceai","cola","fanta","whiskey","rom"],
-  "Pâine": ["paine","pâine","bagheta","chifla","corn","covrigi","patiserie"],
-  "Dulciuri": ["ciocolata","biscuiti","bomboane","chips","napolitane","sticks"],
+  "Legume": ["rosie","rosii","rosi","castravete","ardei","morcov","cartof","ceapa","usturoi","salata","varza","broccoli","conopida","vinete","dovlecel","mazare","fasole","spanac"],
+  "Fructe": ["mar","mere","banana","banane","portocala","portocale","mandarina","pere","piersica","piersici","struguri","pepene","cirese","visine","prune","lamaie","lamai","kiwi"],
+  "Lactate": ["lapte","iaurt","smantana","unt","branza","telemea","cascaval","parmezan","lapte batut"],
+  "Carne": ["pui","piept de pui","carne tocata","vita","porc","pulpe","curcan","sunca","carnati"],
+  "Paine": ["paine","bagheta","chifle","covrigi","lipie"],
+  "Bauturi": ["apa","cola","fanta","suc","bere","vin","whisky","vodka","ceai","cafea"],
+  "Dulciuri": ["ciocolata","bomboane","napolitane","biscuiti","inghetata","prajitura","cheesecake"],
+  "Condimente": ["sare","piper","ulei","otet","oregano","busuioc","cimbru","rozmarin","boia"],
+  "Curatenie": ["detergent","hartie igienica","servetele","sapun","dezinfectant"],
+  "Animale": ["mancare pisici","mancare caini","litiera","nisip pisici","gustari animale"],
   "Altele": []
 };
 
-// funcție detectare categorie
-function detecteazaCategorie(nume) {
-  const lower = nume.toLowerCase();
-  for (const [cat, words] of Object.entries(categorii)) {
-    if (words.some(w => lower.includes(w))) return cat;
+// 🔹 Detectează categoria
+function detecteazaCategorie(prod) {
+  prod = prod.toLowerCase();
+  for (let categorie in categorii) {
+    if (categorii[categorie].some(cuv => prod.includes(cuv))) {
+      return categorie;
+    }
   }
   return "Altele";
 }
 
-// refs UI
+// 🔹 Elemente DOM
 const form = document.getElementById("formProdus");
 const input = document.getElementById("inputProdus");
-const listaDiv = document.getElementById("lista");
-const msg = document.getElementById("msgStatus");
-const clearBtn = document.getElementById("clearChecked");
+const msgStatus = document.getElementById("msgStatus");
+const btnClear = document.getElementById("clearChecked");
 
-function showMsg(text, timeout=1500) {
-  msg.textContent = text;
-  msg.style.opacity = "1";
-  setTimeout(()=> msg.style.opacity="0", timeout);
-}
+// tab curent (default general)
+let currentTab = "general";
 
-// Adaugă produs
+// 🔹 Schimbă tab
+window.switchTab = function (tab) {
+  currentTab = tab;
+
+  // vizual
+  document.querySelectorAll(".shop").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+
+  document.getElementById(tab).classList.add("active");
+  document.querySelector(`.tab-button[onclick="switchTab('${tab}')"]`).classList.add("active");
+
+  renderList(tab);
+};
+
+// 🔹 Adaugă produs
 form.addEventListener("submit", e => {
   e.preventDefault();
-  const val = input.value.trim();
-  if (!val) return;
-  const cat = detecteazaCategorie(val);
-  const itemRef = push(listaRef);
-  set(itemRef, {
-    id: itemRef.key,
-    nume: val,
-    categorie: cat,
-    checked: false,
-    createdAt: Date.now()
+  const produs = input.value.trim();
+  if (!produs) return;
+
+  const categorie = detecteazaCategorie(produs);
+  const refCat = ref(db, `produse/${currentTab}/${categorie}`);
+
+  push(refCat, {
+    nume: produs,
+    bifat: false
   });
+
   input.value = "";
-  showMsg(`Adăugat la ${cat}`);
+  showStatus("Produs adăugat!");
 });
 
-// Afișează lista live
-onValue(listaRef, snapshot => {
-  const data = snapshot.val() || {};
-  const items = Object.values(data);
-  listaDiv.innerHTML = "";
+// 🔹 Afișează lista
+function renderList(tab) {
+  const container = (tab === "general") ? document.getElementById("lista") : document.getElementById("lista-lidl");
 
-  // grupare pe categorii
-  const grupat = {};
-  items.forEach(it => {
-    if (!grupat[it.categorie]) grupat[it.categorie] = [];
-    grupat[it.categorie].push(it);
-  });
+  onValue(ref(db, "produse/" + tab), snapshot => {
+    container.innerHTML = "";
 
-  const ordine = Object.keys(categorii).concat(["Altele"]);
-  ordine.forEach(cat => {
-    if (!grupat[cat]) return;
-    const card = document.createElement("div");
-    card.className = "categorie-card";
+    if (!snapshot.exists()) {
+      container.innerHTML = "<p style='text-align:center;color:#999;'>Nicio cumpărătură adăugată.</p>";
+      return;
+    }
 
-    const h3 = document.createElement("h3");
-    h3.textContent = `${cat} (${grupat[cat].length})`;
-    card.appendChild(h3);
+    const data = snapshot.val();
 
-    const ul = document.createElement("ul");
-    grupat[cat].forEach(item => {
-      const li = document.createElement("li");
+    Object.keys(data).forEach(categorie => {
+      const card = document.createElement("div");
+      card.className = "categorie-card";
 
-      const left = document.createElement("div");
-      left.style.display = "flex";
-      left.style.alignItems = "center";
-      left.style.gap = "10px";
+      const h3 = document.createElement("h3");
+      h3.textContent = categorie;
+      card.appendChild(h3);
 
-      const cb = document.createElement("input");
-      cb.type = "checkbox";
-      cb.checked = item.checked;
-      cb.addEventListener("change", () => {
-        update(ref(db, `lista/${item.id}`), { checked: cb.checked });
+      const ul = document.createElement("ul");
+
+      Object.entries(data[categorie]).forEach(([id, produs]) => {
+        const li = document.createElement("li");
+
+        const span = document.createElement("span");
+        span.textContent = produs.nume;
+        if (produs.bifat) span.style.textDecoration = "line-through";
+        li.appendChild(span);
+
+        const btnEdit = document.createElement("button");
+        btnEdit.textContent = "Editează";
+        btnEdit.className = "btn-edit";
+        btnEdit.onclick = () => {
+          const nou = prompt("Editează produsul:", produs.nume);
+          if (nou) {
+            update(ref(db, `produse/${tab}/${categorie}/${id}`), { nume: nou });
+          }
+        };
+
+        const btnDel = document.createElement("button");
+        btnDel.textContent = "Șterge";
+        btnDel.className = "btn-del";
+        btnDel.onclick = () => remove(ref(db, `produse/${tab}/${categorie}/${id}`));
+
+        li.appendChild(btnEdit);
+        li.appendChild(btnDel);
+
+        li.onclick = e => {
+          if (e.target === btnEdit || e.target === btnDel) return;
+          update(ref(db, `produse/${tab}/${categorie}/${id}`), { bifat: !produs.bifat });
+        };
+
+        ul.appendChild(li);
       });
 
-      const span = document.createElement("span");
-      span.textContent = item.nume;
-      if (item.checked) span.style.textDecoration = "line-through";
+      card.appendChild(ul);
+      container.appendChild(card);
+    });
+  });
+}
 
-      left.appendChild(cb);
-      left.appendChild(span);
-
-      const actions = document.createElement("div");
-      const edit = document.createElement("button");
-      edit.textContent = "Editează";
-      edit.className = "btn-edit";
-      edit.addEventListener("click", () => {
-        const nou = prompt("Editează produsul:", item.nume);
-        if (nou) {
-          update(ref(db, `lista/${item.id}`), {
-            nume: nou,
-            categorie: detecteazaCategorie(nou)
-          });
+// 🔹 Șterge toate bifatele din tabul curent
+btnClear.addEventListener("click", () => {
+  onValue(ref(db, "produse/" + currentTab), snapshot => {
+    if (!snapshot.exists()) return;
+    const data = snapshot.val();
+    for (let categorie in data) {
+      for (let id in data[categorie]) {
+        if (data[categorie][id].bifat) {
+          remove(ref(db, `produse/${currentTab}/${categorie}/${id}`));
         }
-      });
-
-      const del = document.createElement("button");
-      del.textContent = "Șterge";
-      del.className = "btn-del";
-      del.addEventListener("click", () => {
-        remove(ref(db, `lista/${item.id}`));
-      });
-
-      actions.appendChild(edit);
-      actions.appendChild(del);
-
-      li.appendChild(left);
-      li.appendChild(actions);
-      ul.appendChild(li);
-    });
-
-    card.appendChild(ul);
-    listaDiv.appendChild(card);
-  });
-});
-
-// Șterge bifate
-clearBtn.addEventListener("click", () => {
-  onValue(listaRef, snapshot => {
-    const data = snapshot.val() || {};
-    Object.values(data).forEach(item => {
-      if (item.checked) remove(ref(db, `lista/${item.id}`));
-    });
+      }
+    }
   }, { onlyOnce: true });
+  showStatus("Produse bifate șterse!");
 });
+
+// 🔹 Status vizual
+function showStatus(msg) {
+  msgStatus.textContent = msg;
+  msgStatus.style.opacity = 1;
+  setTimeout(() => msgStatus.style.opacity = 0, 2000);
+}
+
+// 🔹 Pornim cu tab-ul "general"
+renderList("general");
