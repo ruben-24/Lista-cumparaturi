@@ -1,49 +1,76 @@
 body {
-  background-color: #121212;
+  background-color: #000;
   color: #fff;
   font-family: Arial, sans-serif;
-  padding: 10px;
+  margin: 0;
+  padding: 1rem;
 }
-#magazin-tabs button.active {
-  background-color: #ff9800;
-  color: #000;
+
+h1 {
+  text-align: center;
 }
-.categorie-card {
-  border: 1px solid #444;
-  margin: 10px 0;
-  padding: 10px;
-  border-radius: 8px;
-  background-color: #1e1e1e;
-}
-.categorie-card h3 {
-  margin: 0 0 10px 0;
-}
-.categorie-card ul {
-  list-style: none;
-  padding: 0;
-}
-.categorie-card li {
+
+#magazin-tabs {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1rem;
 }
-.btn-del {
-  background-color: #f44336;
+
+.tab {
+  background-color: #222;
   color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 2px 6px;
+  padding: 0.5rem 1rem;
+  margin: 0.2rem;
+  border-radius: 5px;
   cursor: pointer;
 }
-input[type=checkbox] {
-  margin-right: 8px;
+
+.tab.active {
+  background-color: #555;
 }
-#msg {
-  transition: opacity 0.5s;
-  margin-bottom: 10px;
+
+form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
 }
-@media (max-width:600px){
-  .categorie-card li { flex-direction: column; align-items: flex-start; }
-  .btn-del { margin-top:5px; }
+
+form input {
+  padding: 0.5rem;
+  flex: 1;
+  max-width: 300px;
+  margin-right: 0.5rem;
+  border-radius: 5px;
+  border: none;
+}
+
+form button {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: none;
+  background-color: #555;
+  color: #fff;
+  cursor: pointer;
+}
+
+#shopping-list {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.product-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid #333;
+}
+
+.product-item input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.category-label {
+  font-size: 0.8rem;
+  color: #aaa;
 }
